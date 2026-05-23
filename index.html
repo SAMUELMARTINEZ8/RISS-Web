@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RISS - Prototipo V1.0</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="bg-gray-200 p-8">
+
+    <div class="max-w-4xl mx-auto bg-white rounded-lg shadow-lg overflow-hidden">
+        
+        <div class="bg-blue-900 text-white p-4 flex justify-between items-center">
+            <h1 class="text-2xl font-bold">RISS | Supervisión de Calderas</h1>
+            <span class="bg-green-500 text-xs font-bold px-2 py-1 rounded">Sistema En Línea</span>
+        </div>
+
+        <div class="p-6">
+            <h2 class="text-xl font-semibold text-gray-700 mb-4">Sensor de Temperatura (PT-1000)</h2>
+            
+            <div class="bg-gray-50 border border-gray-200 rounded p-4 h-64 flex items-center justify-center">
+                <canvas id="miGrafica"></canvas>
+            </div>
+        </div>
+
+    </div>
+    <script>
+        // Seleccionamos el lienzo (canvas) donde se dibujará la gráfica
+        const ctx = document.getElementById('miGrafica').getContext('2d');
+        
+        // Creamos la gráfica
+        const graficaTemperatura = new Chart(ctx, {
+            type: 'line', // Tipo de gráfica de líneas
+            data: {
+                // Las etiquetas de la parte inferior (tiempo)
+                labels: ['10:00', '10:05', '10:10', '10:15', '10:20', '10:25', '10:30'], 
+                datasets: [{
+                    label: 'Temperatura (°C)',
+                    data: [65, 68, 75, 72, 80, 85, 82], // Los valores de los sensores PT-1000
+                    borderColor: 'rgb(220, 38, 38)', // Color rojo de la línea
+                    backgroundColor: 'rgba(220, 38, 38, 0.2)', // Sombreado bajo la línea
+                    borderWidth: 3,
+                    fill: true,
+                    tension: 0.4 // Esto hace que la línea se vea curva y suave
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'top'
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: false,
+                        suggestedMin: 50, // Temperatura mínima sugerida en la vista
+                        suggestedMax: 100 // Temperatura máxima sugerida en la vista
+                    }
+                }
+            }
+        });
+        // Simulador de Tiempo Real para el MVP de RISS
+        // Esta función se repetirá automáticamente cada 2000 milisegundos (2 segundos)
+        setInterval(() => {
+            // 1. Generar una temperatura aleatoria realista para una caldera (entre 70 y 90 grados)
+            const nuevaTemperatura = Math.floor(Math.random() * (90 - 70 + 1)) + 70;
+            
+            // 2. Obtener la hora actual exacta (formato HH:MM:SS)
+            const ahora = new Date();
+            const tiempoStr = ahora.getHours().toString().padStart(2, '0') + ':' + 
+                              ahora.getMinutes().toString().padStart(2, '0') + ':' + 
+                              ahora.getSeconds().toString().padStart(2, '0');
+
+            // 3. Añadir los nuevos datos al final de la gráfica
+            graficaTemperatura.data.labels.push(tiempoStr);
+            graficaTemperatura.data.datasets[0].data.push(nuevaTemperatura);
+
+            // 4. Eliminar el dato más antiguo (el primero) para que la gráfica no se sature de puntos
+            // Mantenemos siempre un máximo de 10 puntos visibles en la pantalla
+            if (graficaTemperatura.data.labels.length > 10) {
+                graficaTemperatura.data.labels.shift();
+                graficaTemperatura.data.datasets[0].data.shift();
+            }
+
+            // 5. Ordenarle a Chart.js que actualice el lienzo visualmente
+            graficaTemperatura.update();
+
+        }, 2000);
+    </script>
+</body>
+</html>
