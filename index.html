@@ -66,33 +66,33 @@
                 }
             }
         });
-        // Simulador de Tiempo Real para el MVP de RISS
-        // Esta función se repetirá automáticamente cada 2000 milisegundos (2 segundos)
-        setInterval(() => {
-            // 1. Generar una temperatura aleatoria realista para una caldera (entre 70 y 90 grados)
-            const nuevaTemperatura = Math.floor(Math.random() * (90 - 70 + 1)) + 70;
-            
-            // 2. Obtener la hora actual exacta (formato HH:MM:SS)
-            const ahora = new Date();
-            const tiempoStr = ahora.getHours().toString().padStart(2, '0') + ':' + 
-                              ahora.getMinutes().toString().padStart(2, '0') + ':' + 
-                              ahora.getSeconds().toString().padStart(2, '0');
+        // Función asíncrona para consultar la API de RISS
+        async function obtenerDatos() {
+            try {
+                // 1. Hacemos la petición GET a nuestro servidor en Python
+                const respuesta = await fetch('http://127.0.0.1:8000/api/lecturas/');
+                const lecturas = await respuesta.json();
 
-            // 3. Añadir los nuevos datos al final de la gráfica
-            graficaTemperatura.data.labels.push(tiempoStr);
-            graficaTemperatura.data.datasets[0].data.push(nuevaTemperatura);
+                // 2. Extraemos las horas y las temperaturas de los datos reales de la base de datos
+                const horas = lecturas.map(lectura => lectura.timestamp);
+                const temperaturas = lecturas.map(lectura => lectura.temperatura);
 
-            // 4. Eliminar el dato más antiguo (el primero) para que la gráfica no se sature de puntos
-            // Mantenemos siempre un máximo de 10 puntos visibles en la pantalla
-            if (graficaTemperatura.data.labels.length > 10) {
-                graficaTemperatura.data.labels.shift();
-                graficaTemperatura.data.datasets[0].data.shift();
+                // 3. Inyectamos los datos reales a la gráfica
+                graficaTemperatura.data.labels = horas;
+                graficaTemperatura.data.datasets[0].data = temperaturas;
+                
+                // 4. Actualizamos el lienzo
+                graficaTemperatura.update();
+            } catch (error) {
+                console.error("No se pudo conectar con el servidor RISS:", error);
             }
+        }
 
-            // 5. Ordenarle a Chart.js que actualice el lienzo visualmente
-            graficaTemperatura.update();
-
-        }, 2000);
+        // Ejecutar inmediatamente al abrir la página
+        obtenerDatos();
+        
+        // Consultar a la base de datos cada 2 segundos (Supervisión en tiempo real)
+        setInterval(obtenerDatos, 2000);
     </script>
 </body>
 </html>

@@ -1,4 +1,9 @@
-__pycache__/
-*.db
-.env
+# Entornos virtuales
 venv/
+__pycache__/
+
+# Base de datos local
+*.db
+
+# Archivos del sistema operativo
+.DS_Store
