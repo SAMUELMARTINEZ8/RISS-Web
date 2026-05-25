@@ -6,92 +6,155 @@
     <title>RISS - Prototipo V1.0</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
-<body class="bg-gray-200 p-8">
+<body class="bg-slate-100 font-sans text-slate-800">
 
-    <div class="max-w-4xl mx-auto bg-white rounded-lg shadow-lg overflow-hidden">
-        
-        <div class="bg-blue-900 text-white p-4 flex justify-between items-center">
-            <h1 class="text-2xl font-bold">RISS | Supervisión de Calderas</h1>
-            <span class="bg-green-500 text-xs font-bold px-2 py-1 rounded">Sistema En Línea</span>
-        </div>
-
-        <div class="p-6">
-            <h2 class="text-xl font-semibold text-gray-700 mb-4">Sensor de Temperatura (PT-1000)</h2>
-            
-            <div class="bg-gray-50 border border-gray-200 rounded p-4 h-64 flex items-center justify-center">
-                <canvas id="miGrafica"></canvas>
+    <nav class="bg-slate-900 text-white shadow-lg">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center gap-3">
+                    <i class="fa-solid fa-server text-blue-400 text-xl"></i>
+                    <span class="font-bold text-xl tracking-wider">RISS <span class="text-slate-400 text-sm">V1.0</span></span>
+                </div>
+                <div>
+                    <span class="bg-emerald-500/20 text-emerald-400 border border-emerald-500 text-xs font-bold px-3 py-1.5 rounded-full flex items-center gap-2">
+                        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> Sistema En Línea
+                    </span>
+                </div>
             </div>
-        <div class="mt-8 mb-4 text-center">
-            <p class="text-gray-500 text-sm font-medium tracking-wide">Developed by Martinez Reyes Samuel</p>
         </div>
+    </nav>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        
+        <div class="mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div>
+                <h1 class="text-2xl font-bold text-slate-800">Supervisión de Caldera Principal</h1>
+                <p class="text-sm text-slate-500">Módulo K2E | ID: CAL-001 | Hotel Sede</p>
+            </div>
+            <div class="flex gap-2">
+                <button class="bg-slate-800 hover:bg-slate-700 text-white px-4 py-2 rounded shadow text-sm font-medium transition-colors">
+                    <i class="fa-solid fa-gear mr-2"></i> Ajustar Válvulas
+                </button>
+                <button class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded shadow text-sm font-medium transition-colors">
+                    <i class="fa-solid fa-triangle-exclamation mr-2"></i> Paro de Emergencia
+                </button>
+            </div>
         </div>
 
-    </div>
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-8">
+            <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5 border-l-4 border-l-blue-500">
+                <p class="text-sm font-medium text-slate-500 mb-1">Temperatura Actual</p>
+                <h3 id="kpi-actual" class="text-3xl font-bold text-slate-800">-- °C</h3>
+            </div>
+            <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5 border-l-4 border-l-red-500">
+                <p class="text-sm font-medium text-slate-500 mb-1">Pico Máximo (Sesión)</p>
+                <h3 id="kpi-max" class="text-3xl font-bold text-slate-800">-- °C</h3>
+            </div>
+            <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5 border-l-4 border-l-emerald-500">
+                <p class="text-sm font-medium text-slate-500 mb-1">Mínimo (Sesión)</p>
+                <h3 id="kpi-min" class="text-3xl font-bold text-slate-800">-- °C</h3>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+            <div class="px-6 py-4 border-b border-slate-200 bg-slate-50 flex justify-between items-center">
+                <h2 id="titulo-grafica" class="text-lg font-semibold text-slate-800">
+                    <i class="fa-solid fa-temperature-half mr-2 text-slate-500"></i> Telemetría PT-1000
+                </h2>
+            </div>
+            <div class="p-6">
+                <div class="h-72 w-full">
+                    <canvas id="miGrafica"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-12 text-center">
+            <p class="text-slate-400 text-sm font-medium tracking-wide">Developed by Martinez Reyes Samuel</p>
+        </div>
+
+    </main>
+
     <script>
-        // Seleccionamos el lienzo (canvas) donde se dibujará la gráfica
         const ctx = document.getElementById('miGrafica').getContext('2d');
-        
-        // Creamos la gráfica
         const graficaTemperatura = new Chart(ctx, {
-            type: 'line', // Tipo de gráfica de líneas
+            type: 'line',
             data: {
-                // Las etiquetas de la parte inferior (tiempo)
-                labels: ['10:00', '10:05', '10:10', '10:15', '10:20', '10:25', '10:30'], 
+                labels: [], 
                 datasets: [{
                     label: 'Temperatura (°C)',
-                    data: [65, 68, 75, 72, 80, 85, 82], // Los valores de los sensores PT-1000
-                    borderColor: 'rgb(220, 38, 38)', // Color rojo de la línea
-                    backgroundColor: 'rgba(220, 38, 38, 0.2)', // Sombreado bajo la línea
-                    borderWidth: 3,
+                    data: [], 
+                    borderColor: 'rgb(37, 99, 235)',
+                    backgroundColor: 'rgba(37, 99, 235, 0.1)',
+                    borderWidth: 2,
+                    pointBackgroundColor: 'rgb(37, 99, 235)',
+                    pointRadius: 4,
                     fill: true,
-                    tension: 0.4 // Esto hace que la línea se vea curva y suave
+                    tension: 0.4 
                 }]
             },
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        display: true,
-                        position: 'top'
-                    }
-                },
+                plugins: { legend: { display: false } },
                 scales: {
                     y: {
                         beginAtZero: false,
-                        suggestedMin: 50, // Temperatura mínima sugerida en la vista
-                        suggestedMax: 100 // Temperatura máxima sugerida en la vista
-                    }
+                        suggestedMin: 65,
+                        suggestedMax: 95,
+                        grid: { borderDash: [4, 4] }
+                    },
+                    x: { grid: { display: false } }
                 }
             }
         });
-        // Función asíncrona para consultar la API de RISS
+
         async function obtenerDatos() {
             try {
-                // 1. Hacemos la petición GET a nuestro servidor en Python
                 const respuesta = await fetch('http://127.0.0.1:8000/api/lecturas/');
                 const lecturas = await respuesta.json();
 
-                // 2. Extraemos las horas y las temperaturas de los datos reales de la base de datos
-                const horas = lecturas.map(lectura => lectura.timestamp);
-                const temperaturas = lecturas.map(lectura => lectura.temperatura);
+                const horas = lecturas.map(l => l.timestamp);
+                const temperaturas = lecturas.map(l => l.temperatura);
 
-                // 3. Inyectamos los datos reales a la gráfica
                 graficaTemperatura.data.labels = horas;
                 graficaTemperatura.data.datasets[0].data = temperaturas;
                 
-                // 4. Actualizamos el lienzo
+                if (temperaturas.length > 0) {
+                    const tempActual = temperaturas[temperaturas.length - 1];
+                    const tempMax = Math.max(...temperaturas);
+                    const tempMin = Math.min(...temperaturas);
+
+                    // Actualizar Tarjetas (KPIs)
+                    document.getElementById('kpi-actual').innerText = tempActual.toFixed(1) + ' °C';
+                    document.getElementById('kpi-max').innerText = tempMax.toFixed(1) + ' °C';
+                    document.getElementById('kpi-min').innerText = tempMin.toFixed(1) + ' °C';
+
+                    const tituloGrafica = document.getElementById('titulo-grafica');
+
+                    // Lógica de Alertas
+                    if (tempActual > 85) {
+                        tituloGrafica.innerHTML = `<i class="fa-solid fa-triangle-exclamation mr-2 text-red-600"></i> <span class="text-red-600 font-bold animate-pulse">¡ALERTA CRÍTICA: SOBRECALENTAMIENTO!</span>`;
+                        graficaTemperatura.data.datasets[0].borderColor = 'rgb(220, 38, 38)';
+                        graficaTemperatura.data.datasets[0].backgroundColor = 'rgba(220, 38, 38, 0.1)';
+                        graficaTemperatura.data.datasets[0].pointBackgroundColor = 'rgb(220, 38, 38)';
+                    } else {
+                        tituloGrafica.innerHTML = `<i class="fa-solid fa-temperature-half mr-2 text-emerald-500"></i> <span class="text-slate-800">Telemetría PT-1000 - Estado Normal</span>`;
+                        graficaTemperatura.data.datasets[0].borderColor = 'rgb(37, 99, 235)';
+                        graficaTemperatura.data.datasets[0].backgroundColor = 'rgba(37, 99, 235, 0.1)';
+                        graficaTemperatura.data.datasets[0].pointBackgroundColor = 'rgb(37, 99, 235)';
+                    }
+                }
+
                 graficaTemperatura.update();
             } catch (error) {
-                console.error("No se pudo conectar con el servidor RISS:", error);
+                console.error("Error de conexión RISS:", error);
             }
         }
 
-        // Ejecutar inmediatamente al abrir la página
         obtenerDatos();
-        
-        // Consultar a la base de datos cada 2 segundos (Supervisión en tiempo real)
         setInterval(obtenerDatos, 2000);
     </script>
 </body>
