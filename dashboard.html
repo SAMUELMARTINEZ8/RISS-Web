@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RIS | Selección de Entorno</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body class="bg-[#0b0e14] flex flex-col items-center justify-center min-h-screen font-sans text-white relative overflow-hidden">
+
+    <div class="absolute top-[-10%] left-[-10%] w-96 h-96 bg-[#00d2ff] rounded-full mix-blend-multiply filter blur-[128px] opacity-20"></div>
+    <div class="absolute bottom-[-10%] right-[-10%] w-96 h-96 bg-emerald-500 rounded-full mix-blend-multiply filter blur-[128px] opacity-10"></div>
+
+    <div class="w-full max-w-5xl p-8 relative z-10">
+        
+        <div class="text-center mb-16">
+            <div class="inline-block p-4 rounded-full bg-[#151a23] border border-[#232b38] mb-6 shadow-[0_0_20px_rgba(0,210,255,0.1)]">
+                <i class="fa-solid fa-server text-[#00d2ff] text-4xl"></i>
+            </div>
+            <h1 class="text-4xl md:text-5xl font-bold tracking-tight mb-3">
+                RIS <span class="text-[#00d2ff] text-2xl align-top">V1.0</span>
+            </h1>
+            <p class="text-gray-400 text-lg">Sistema de Supervisión Remota</p>
+            <p class="text-gray-500 mt-2 text-sm">Seleccione el entorno de monitoreo para iniciar sesión</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+            
+            <button onclick="window.location.href='dashboard.html'" class="group relative bg-[#151a23] border border-[#232b38] hover:border-[#00d2ff] rounded-2xl p-10 transition-all duration-300 hover:shadow-[0_0_30px_rgba(0,210,255,0.15)] flex flex-col items-center text-center overflow-hidden transform hover:-translate-y-2">
+                <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-[#00d2ff] to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                
+                <i class="fa-solid fa-hotel text-6xl text-gray-600 group-hover:text-[#00d2ff] transition-colors mb-6"></i>
+                <h2 class="text-2xl font-semibold text-white mb-3">Sector Hotelero</h2>
+                <p class="text-gray-400 text-sm leading-relaxed">
+                    Acceda al panel de monitoreo para módulos K2H. Supervisión de calderas y eficiencia térmica en habitaciones.
+                </p>
+                
+                <div class="mt-8 flex items-center gap-2 text-[#00d2ff] opacity-0 group-hover:opacity-100 transition-opacity">
+                    <span class="text-sm font-bold">Ingresar al sistema</span>
+                    <i class="fa-solid fa-arrow-right"></i>
+                </div>
+            </button>
+
+            <button onclick="window.location.href='dashboard.html'" class="group relative bg-[#151a23] border border-[#232b38] hover:border-emerald-500 rounded-2xl p-10 transition-all duration-300 hover:shadow-[0_0_30px_rgba(16,185,129,0.15)] flex flex-col items-center text-center overflow-hidden transform hover:-translate-y-2">
+                <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-emerald-500 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                
+                <i class="fa-solid fa-industry text-6xl text-gray-600 group-hover:text-emerald-500 transition-colors mb-6"></i>
+                <h2 class="text-2xl font-semibold text-white mb-3">Sector Industrial</h2>
+                <p class="text-gray-400 text-sm leading-relaxed">
+                    Acceda al panel de telemetría de módulos K2E. Control de sensores PT-1000 y prevención de sobrecalentamiento.
+                </p>
+
+                <div class="mt-8 flex items-center gap-2 text-emerald-500 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <span class="text-sm font-bold">Ingresar al sistema</span>
+                    <i class="fa-solid fa-arrow-right"></i>
+                </div>
+            </button>
+
+        </div>
+
+        <div class="mt-20 text-center">
+            <p class="text-gray-500 text-sm tracking-wide">Desarrollado por <strong>Martínez Reyes Samuel</strong></p>
+            <p class="text-gray-600 text-xs mt-1">Universidad Juárez Autónoma de Tabasco | DACyTI</p>
+        </div>
+
+    </div>
+
+</body>
+</html>
